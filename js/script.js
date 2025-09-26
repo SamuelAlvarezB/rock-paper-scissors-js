@@ -1,25 +1,39 @@
+const resultDiv = document.getElementById("results");
+let humanScore = 0;
+let computerScore = 0;
+let roundCount = 0;
+
+const buttons = document.querySelectorAll("button");
+
+buttons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+        let target = e.target.textContent;
+        if (humanScore < 5 && computerScore < 5) {
+            playRound(target);
+        }
+    })
+})
+
 function getComputerChoice() {
     let choice = 0;
     choice = (Math.floor((Math.random() * 3) + 1));
     return choice;
 }
 
-function getHumanChoice() {
-    let choiceNumber = 0;
-    let choice = "";
-    choice = prompt("Write your choice:").toLowerCase();
-    if (choice === "rock") {
+function getHumanChoice(choice) {
+    if (choice === "ROCK") {
         choiceNumber = 1;
-    } else if (choice === "paper") {
+    } else if (choice === "PAPER") {
         choiceNumber = 2;
-    } else if (choice === "scissors") {
+    } else if (choice === "SCISSORS") {
         choiceNumber = 3;
     }
     return choiceNumber;
 }
 
-function playRound() {
-    let humanChoice = getHumanChoice();
+function playRound(human) {
+    roundCount++;
+    let humanChoice = getHumanChoice(human);
     let computerChoice = getComputerChoice();
     if (humanChoice === computerChoice) {
         console.log("DRAW!")
@@ -37,9 +51,25 @@ function playRound() {
         humanScore++;
     }
 
-    console.log("Human choice: " + choiceToString(humanChoice) + " / Computer choice: " + choiceToString(computerChoice));
-    console.log("Computer Score: " + computerScore);
-    console.log("Human score: " + humanScore);
+    appendResults(humanChoice, computerChoice);
+
+    if (humanScore === 5 || computerScore === 5) {
+        getWinner();
+        console.log("!!!!!!!!!!!!!");
+    }
+}
+
+function appendResults(humanChoice, computerChoice) {
+    const round = document.createElement("p");
+    round.textContent = "Round " + roundCount;
+    const resultChoices = document.createElement("p");
+    const resultPoints = document.createElement("p");
+    resultChoices.textContent = "Human choice: " + choiceToString(humanChoice) + " / Computer choice: " + choiceToString(computerChoice);
+    resultPoints.textContent = "Computer Score: " + computerScore + "   " + "Human score: " + humanScore;
+    resultDiv.innerHTML = '';
+    resultDiv.appendChild(round);
+    resultDiv.appendChild(resultChoices);
+    resultDiv.appendChild(resultPoints);
 }
 
 function choiceToString(number) {
@@ -56,28 +86,14 @@ function choiceToString(number) {
     }
 }
 
-function getWinner(humanScore, computerScore) {
+function getWinner() {
+    const winner = document.createElement("h2");
     if (humanScore > computerScore) {
-        console.log("YOU ARE THE WINNER!!");
+        winner.textContent = "YOU ARE THE WINNER!!";
+        winner.style.color = "green";
     } else if (humanScore < computerScore) {
-        console.log("YOU LOSE!!")
-    } else {
-        console.log("DRAW!!")
+        winner.textContent = "YOU LOSE!!";
+        winner.style.color = "red";
     }
+    resultDiv.appendChild(winner);
 }
-
-function playGame() {
-    let counter = 0;
-    while (counter < 5) {
-        console.log("ROUND " + (counter + 1));
-        playRound();
-        counter++;
-    }
-}
-
-let humanScore = 0;
-let computerScore = 0;
-
-playGame();
-
-getWinner(humanScore, computerScore);
